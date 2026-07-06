@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  nome      String
+  email     String   @unique
+  senhaHash String
+  bio       String?
+  regiao    String?
+  avatarUrl String?
+  pontos    Int      @default(0)
+  nivel     Int      @default(1)
+  createdAt DateTime @default(now())
+
+  posts         Post[]
+  likes         Like[]
+  comments      Comment[]
+  notifications Notification[]
+  progress      UserProgress[]
+  communities   CommunityMember[]
+  followers     Follow[] @relation("seguindo")
+  following     Follow[] @relation("seguidor")
+}
+
+model Post {
+  id          String     @id @default(uuid())
+  texto       String
+  imagemUrl   String?
+  categoria   String?
+  createdAt   DateTime   @default(now())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challengeId String?
+  challenge   Challenge? @relation(fields: [challengeId], references: [id])
+  likes       Like[]
+  comments    Comment[]
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  @@unique([userId, postId])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  texto     String
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Challenge {
+  id        String    @id @default(uuid())
+  titulo    String
+  descricao String
+  pontos    Int
+  categoria String
+  total     Int
+  prazo     DateTime?
+  posts     Post[]
+  progress  UserProgress[]
+}
+
+model UserProgress {
+  id          String    @id @default(uuid())
+  progresso   Int       @default(0)
+  concluido   Boolean   @default(false)
+  updatedAt   DateTime  @updatedAt
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  @@unique([userId, challengeId])
+}
+
+model Event {
+  id        String   @id @default(uuid())
+  titulo    String
+  descricao String?
+  tipo      String
+  lat       Float
+  lng       Float
+  data      DateTime
+  inscritos Int      @default(0)
+  criadoPor String
+  createdAt DateTime @default(now())
+}
+
+model Community {
+  id        String            @id @default(uuid())
+  nome      String
+  descricao String?
+  icone     String?
+  createdAt DateTime          @default(now())
+  membros   CommunityMember[]
+}
+
+model CommunityMember {
+  id          String    @id @default(uuid())
+  joinedAt    DateTime  @default(now())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  communityId String
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  @@unique([userId, communityId])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  tipo      String
+  mensagem  String
+  lida      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Follow {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  seguidorId String
+  seguidor   User     @relation("seguidor", fields: [seguidorId], references: [id], onDelete: Cascade)
+  seguindoId String
+  seguindo   User     @relation("seguindo", fields: [seguindoId], references: [id], onDelete: Cascade)
+  @@unique([seguidorId, seguindoId])
+}

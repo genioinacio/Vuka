@@ -1,0 +1,17 @@
+# Dependências
+node_modules/
+
+# Ficheiros de ambiente — nunca enviar para o GitHub!
+.env
+*.env
+
+# Uploads de imagens
+uploads/
+
+# Build
+dist/
+build/
+
+# Sistema
+.DS_Store
+Thumbs.db

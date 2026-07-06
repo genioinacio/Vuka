@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #f4f7f2;
+  color: #1a1a1a;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f4f7f2; }
+::-webkit-scrollbar-thumb { background: #C0DD97; border-radius: 999px; }
+
+/* Navbar móvel — esconder em desktop */
+@media (min-width: 768px) {
+  .mobile-nav { display: none !important; }
+}
+
+/* Esconder texto da navbar em mobile */
+@media (max-width: 767px) {
+  .nav-label { display: none; }
+}
